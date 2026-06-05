@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>HAPPY BIRTHDAY MINSU!!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Archivo+Black&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { overflow-x: hidden; }
+
+    :root {
+      --hot-pink: #ff3b8a;
+      --neon-yellow: #ffe600;
+      --neon-orange: #ff6a13;
+      --red: #e02323;
+      --cream: #fff7e8;
+      --ink: #0d0d0d;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+      font-weight: 700;
+      color: var(--ink);
+      background: linear-gradient(180deg, #ffeaf3 0%, #fff4d9 35%, #e7f5ff 70%, #ffe1ec 100%);
+      min-height: 100vh;
+    }
+
+    /* ═══════ FIXED CONFETTI WALLPAPER ═══════ */
+    #confetti-bg {
+      position: fixed; inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .conf { position: absolute; }
+
+    /* ═══════════════════════════════ SPLASH ═══════════════════════════════ */
+    #splash {
+      position: fixed; inset: 0;
+      z-index: 999;
+      background: #111;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      transition: opacity 0.5s ease;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+
+    #splash-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 1;
+    }
+
+    .burst {
+      position: absolute;
+      width: 60vw; height: 60vw;
+      max-width: 300px; max-height: 300px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: spin 22s linear infinite;
+      opacity: 0.92;
+      z-index: 2;
+    }
+    @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+    .splash-card {
+      position: relative;
+      z-index: 3;
+      text-align: center;
+      padding: 16px 22px;
+      transform: rotate(-3deg);
+    }
+    .splash-card h1 {
+      font-family: 'Archivo Black', 'Noto Sans KR', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.2rem, 12vw, 3.6rem);
+      line-height: 0.95;
+      color: var(--neon-yellow);
+      letter-spacing: -0.02em;
+      -webkit-text-stroke: 2.5px var(--ink);
+      text-shadow:
+        5px 5px 0 var(--hot-pink),
+        8px 8px 0 var(--ink);
+    }
+
+    .tap-hint {
+      margin-top: 28px;
+      display: inline-block;
+      background: var(--ink);
+      color: var(--neon-yellow);
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      transform: rotate(-2deg);
+      animation: blink 1.1s steps(2, end) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0.35; } }
+
+    .splash-sticker { position: absolute; z-index: 4; pointer-events: none; }
+    .ss-tl { top: 4%;  left: 4%;  transform: rotate(-14deg); }
+    .ss-tr { top: 6%;  right: 4%; transform: rotate(12deg); }
+    .ss-bl { bottom: 6%; left: 6%; transform: rotate(-8deg); }
+    .ss-br { bottom: 4%; right: 4%; transform: rotate(10deg); }
+
+    /* ═══════════════════════════════ MAIN ═══════════════════════════════ */
+    #main {
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.2s;
+    }
+    #main.show { opacity: 1; }
+
+    .top-hint {
+      text-align: center;
+      padding: 56px 22px 14px;
+    }
+    .top-hint .b {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--neon-yellow);
+      padding: 7px 16px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      transform: rotate(-2deg);
+    }
+
+    /* ── COLLAGE ── */
+    .collage {
+      position: relative;
+      overflow: visible;
+      margin: 8px 0 60px;
+    }
+
+    .photo-wrap {
+      position: absolute;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.18s ease-out;
+    }
+    .photo-wrap.dragging { cursor: grabbing; transition: none; }
+    .photo-wrap img {
+      width: 100%;
+      display: block;
+      background: #eee;
+      border: 5px solid #fff;
+      box-shadow:
+        0 0 0 2px var(--ink),
+        5px 5px 0 var(--ink);
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
+    .deco-sticker {
+      position: absolute;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* ── SPEECH BUBBLE (Gulim — joke value) ── */
+    .bubble {
+      position: absolute;
+      background: #fff;
+      border: 2.5px solid var(--ink);
+      border-radius: 16px;
+      padding: 9px 13px 11px;
+      font-family: Gulim, '굴림', GulimChe, '굴림체', 'AppleGothic', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.35;
+      text-align: center;
+      white-space: pre-line;
+      box-shadow: 4px 4px 0 var(--ink);
+      min-width: 100px;
+      max-width: 170px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transform: scale(0.6) translateY(10px) rotate(-3deg);
+      transform-origin: bottom center;
+      transition: opacity 0.18s cubic-bezier(.2,1.4,.4,1),
+                  transform 0.22s cubic-bezier(.2,1.4,.4,1);
+    }
+    .bubble.show { opacity: 1; transform: scale(1) translateY(0) rotate(-3deg); }
+
+    .bubble::after, .bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -16px;
+      left: 50%;
+      width: 0; height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+    }
+    .bubble::after  { border-top: 14px solid #fff; transform: translateX(-50%); margin-bottom: 2px; }
+    .bubble::before { border-top: 16px solid var(--ink); transform: translateX(-50%) translateY(2px); }
+
+    .bubble.v-yellow { background: var(--neon-yellow); }
+    .bubble.v-yellow::after { border-top-color: var(--neon-yellow); }
+    .bubble.v-pink   { background: var(--hot-pink); color: #fff; }
+    .bubble.v-pink::after { border-top-color: var(--hot-pink); }
+    .bubble.v-orange { background: var(--neon-orange); color: #fff; }
+    .bubble.v-orange::after { border-top-color: var(--neon-orange); }
+    .bubble.v-cream  { background: var(--cream); }
+    .bubble.v-cream::after { border-top-color: var(--cream); }
+
+    .paw-row {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px 0 50px;
+      font-size: 1.6rem;
+      letter-spacing: 8px;
+      color: var(--ink);
+      opacity: 0.55;
+    }
+  </style>
+</head>
+<body>
+
+<!-- confetti wallpaper -->
+<div id="confetti-bg"></div>
+
+<!-- ═══════ SPLASH ═══════ -->
+<div id="splash">
+  <img id="splash-img" src="images_v2/main.jpg" alt=""/>
+
+  <svg class="burst" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <polygon points="100,2 112,40 145,18 138,58 178,55 152,82 192,98 152,114 178,141 138,138 145,178 112,156 100,194 88,156 55,178 62,138 22,141 48,114 8,98 48,82 22,55 62,58 55,18 88,40"
+      fill="#ffe600" stroke="#0d0d0d" stroke-width="3" stroke-linejoin="round"/>
+  </svg>
+
+  <div class="splash-sticker ss-tl">
+    <svg width="84" height="84" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="44" fill="#e02323" stroke="#0d0d0d" stroke-width="3"/>
+      <text x="50" y="44" text-anchor="middle" fill="#fff" font-family="Archivo Black" font-size="16">HBD!!</text>
+      <text x="50" y="64" text-anchor="middle" fill="#fff" font-family="Archivo Black" font-size="14">민수♥</text>
+    </svg>
+  </div>
+  <div class="splash-sticker ss-tr">
+    <svg width="126" height="126" viewBox="0 0 100 100">
+      <polygon points="50,4 60,32 90,30 68,52 80,82 50,68 20,82 32,52 10,30 40,32" fill="#ffe600" stroke="#0d0d0d" stroke-width="3" stroke-linejoin="round"/>
+      <text x="50" y="60" text-anchor="middle" fill="#0d0d0d" font-family="Archivo Black" font-size="19">06.07</text>
+    </svg>
+  </div>
+  <div class="splash-sticker ss-bl">
+    <svg width="100" height="64" viewBox="0 0 140 90">
+      <rect x="4" y="4" width="132" height="82" rx="10" fill="#fff" stroke="#0d0d0d" stroke-width="3"/>
+      <text x="70" y="34" text-anchor="middle" fill="#0d0d0d" font-family="Archivo Black" font-size="14">SPECIAL</text>
+      <text x="70" y="62" text-anchor="middle" fill="#e02323" font-family="Archivo Black" font-size="22">민수♥</text>
+    </svg>
+  </div>
+  <div class="splash-sticker ss-br">
+    <svg width="76" height="76" viewBox="0 0 100 100">
+      <path d="M50 90 C 14 64, 6 38, 26 22 C 38 12, 50 24, 50 36 C 50 24, 62 12, 74 22 C 94 38, 86 64, 50 90 Z" fill="#ff3b8a" stroke="#0d0d0d" stroke-width="3"/>
+    </svg>
+  </div>
+
+  <div class="splash-card">
+    <h1>HAPPY<br/>BIRTHDAY<br/>MINSU!!</h1>
+    <div><span class="tap-hint">▶ TAP TO OPEN</span></div>
+  </div>
+</div>
+
+<!-- ═══════ MAIN ═══════ -->
+<div id="main">
+
+  <div class="top-hint"><span class="b">▼ TAP & DRAG ▼</span></div>
+
+  <div class="collage" id="collage"></div>
+
+  <div class="paw-row">🐾 🐾 🐾 🐾 🐾</div>
+</div>
+
+<script>
+const splash = document.getElementById('splash');
+const main   = document.getElementById('main');
+main.style.display = 'none';
+splash.addEventListener('click', () => {
+  splash.classList.add('hide');
+  main.style.display = 'block';
+  setTimeout(() => main.classList.add('show'), 30);
+});
+
+const photos = [
+  "KakaoTalk_Photo_2026-06-05-01-40-10-20.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-8.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-10.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-101.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-32.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-24.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-98.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-3.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-27.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-6.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-15.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-18.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-5.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-19.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-29.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-42.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-13.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-38.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-12.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-36.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-39-34-4.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-82.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-22.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-23.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-1.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-31.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-9.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-2.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-34.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-7.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-21.jpg",
+  "KakaoTalk_Photo_2026-06-05-01-40-10-17.jpg"
+];
+
+const bubbleTexts = [
+  "귀여운데?",
+  "민수야 생일\n축하해 멍",
+  "나 오늘 생일인\n사람 알아",
+  "사랑해 민수",
+  "민수 우리\n1살차이다냥",
+];
+const bubbleVariants = ['', 'v-yellow', 'v-pink', 'v-orange', 'v-cream'];
+
+const stickerSVGs = [
+  `<svg width="68" height="68" viewBox="0 0 100 100">
+    <polygon points="50,4 60,32 90,30 68,52 80,82 50,68 20,82 32,52 10,30 40,32" fill="#ffe600" stroke="#0d0d0d" stroke-width="3" stroke-linejoin="round"/>
+    <text x="50" y="56" text-anchor="middle" fill="#0d0d0d" font-family="Archivo Black" font-size="13">KAWAII</text>
+  </svg>`,
+  `<svg width="78" height="52" viewBox="0 0 140 90">
+    <rect x="6" y="14" width="128" height="62" rx="10" fill="#fff" stroke="#0d0d0d" stroke-width="3"/>
+    <text x="70" y="56" text-anchor="middle" fill="#e02323" font-family="Archivo Black" font-size="22">CUTE!!</text>
+  </svg>`,
+  `<svg width="58" height="58" viewBox="0 0 100 100">
+    <path d="M50 90 C 14 64, 6 38, 26 22 C 38 12, 50 24, 50 36 C 50 24, 62 12, 74 22 C 94 38, 86 64, 50 90 Z" fill="#ff3b8a" stroke="#0d0d0d" stroke-width="3"/>
+  </svg>`,
+  `<svg width="68" height="68" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="44" fill="#e02323" stroke="#0d0d0d" stroke-width="3"/>
+    <text x="50" y="44" text-anchor="middle" fill="#fff" font-family="Archivo Black" font-size="16">HBD!!</text>
+    <text x="50" y="64" text-anchor="middle" fill="#fff" font-family="Archivo Black" font-size="13">민수♥</text>
+  </svg>`,
+  `<svg width="82" height="50" viewBox="0 0 140 90">
+    <polygon points="20,6 134,6 134,84 20,84 6,45" fill="#ffe600" stroke="#0d0d0d" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="22" cy="45" r="5" fill="#0d0d0d"/>
+    <text x="80" y="54" text-anchor="middle" fill="#0d0d0d" font-family="Archivo Black" font-size="22">멍♥</text>
+  </svg>`,
+  `<svg width="86" height="72" viewBox="0 0 130 110">
+    <polygon points="65,4 78,28 108,18 100,46 130,52 102,68 122,96 92,86 82,108 65,86 48,108 38,86 8,96 28,68 0,52 30,46 22,18 52,28" fill="#ff6a13" stroke="#0d0d0d" stroke-width="3" stroke-linejoin="round"/>
+    <text x="65" y="58" text-anchor="middle" fill="#fff" font-family="Archivo Black" font-size="15">SO</text>
+    <text x="65" y="74" text-anchor="middle" fill="#fff" font-family="Archivo Black" font-size="15">CUTE!</text>
+  </svg>`,
+  `<svg width="60" height="60" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="42" fill="#27c86a" stroke="#0d0d0d" stroke-width="3"/>
+    <text x="50" y="56" text-anchor="middle" fill="#fff" font-family="Archivo Black" font-size="14">멍멍♥</text>
+  </svg>`,
+  `<svg width="44" height="44" viewBox="0 0 100 100">
+    <polygon points="50,8 62,38 94,38 68,58 78,90 50,72 22,90 32,58 6,38 38,38" fill="#ffe600" stroke="#0d0d0d" stroke-width="3" stroke-linejoin="round"/>
+  </svg>`,
+];
+
+/* ── seeded RNG ─────────────────────────────────────────────── */
+let _s = 31337;
+function rng() { _s = (_s * 1664525 + 1013904223) & 0xffffffff; return (_s >>> 0) / 0xffffffff; }
+function rr(a,b)  { return a + rng()*(b-a); }
+function ri(a,b)  { return Math.floor(rr(a, b+1)); }
+
+/* ── CONFETTI WALLPAPER (incl. paw emojis) ──────────────────── */
+(function makeConfetti() {
+  const bg = document.getElementById('confetti-bg');
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  const colors = ['#ff3b8a', '#ffe600', '#ff6a13', '#27c86a', '#1f6fd6', '#e02323', '#a259ff'];
+  const N = 130;
+  for (let i = 0; i < N; i++) {
+    const el = document.createElement('div');
+    el.className = 'conf';
+    const c = colors[Math.floor(rng() * colors.length)];
+    const x = Math.floor(rng() * w);
+    const y = Math.floor(rng() * h);
+    const tilt = Math.floor(rng() * 360);
+    /* shapes: 0 rect, 1 dot, 2 diamond, 3 squiggle, 4 paw emoji */
+    const r = rng();
+    const shape = r < 0.25 ? 0 : r < 0.45 ? 1 : r < 0.6 ? 2 : r < 0.75 ? 3 : 4;
+
+    if (shape === 0) {
+      const w2 = 8 + Math.floor(rng() * 10);
+      const h2 = 3 + Math.floor(rng() * 4);
+      el.style.cssText = `left:${x}px; top:${y}px; width:${w2}px; height:${h2}px; background:${c}; transform: rotate(${tilt}deg); border-radius:2px;`;
+    } else if (shape === 1) {
+      const rr2 = 3 + Math.floor(rng() * 4);
+      el.style.cssText = `left:${x}px; top:${y}px; width:${rr2*2}px; height:${rr2*2}px; background:${c}; border-radius:50%;`;
+    } else if (shape === 2) {
+      const w2 = 6 + Math.floor(rng() * 8);
+      el.style.cssText = `left:${x}px; top:${y}px; width:${w2}px; height:${w2}px; background:${c}; transform: rotate(45deg);`;
+    } else if (shape === 3) {
+      const s = 12 + Math.floor(rng() * 10);
+      el.innerHTML = `<svg width="${s}" height="${s}" viewBox="0 0 30 30"><path d="M2 15 Q 8 6, 15 15 T 28 15" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+      el.style.cssText = `left:${x}px; top:${y}px; transform: rotate(${tilt}deg);`;
+    } else {
+      const sz = 16 + Math.floor(rng() * 14);
+      el.textContent = '🐾';
+      el.style.cssText = `left:${x}px; top:${y}px; font-size:${sz}px; line-height:1; transform: rotate(${tilt}deg); opacity:0.7;`;
+    }
+    bg.appendChild(el);
+  }
+})();
+
+/* ── BUILD ZIG-ZAG COLLAGE (smaller, more spread) ───────────── */
+const collage = document.getElementById('collage');
+const VW = window.innerWidth;
+const ASPECT = 1.28;
+const PHOTO_MIN_W = 0.28;
+const PHOTO_MAX_W = 0.40;
+const STEP_RATIO  = 0.65;
+
+/* pre-generate balanced ±tilts (wider range, magnitude 4°–24°), then shuffle */
+const tilts = [];
+for (let i = 0; i < photos.length; i++) {
+  const mag = rr(4, 24);
+  tilts.push((i < photos.length / 2 ? -1 : 1) * mag);
+}
+for (let i = tilts.length - 1; i > 0; i--) {
+  const j = Math.floor(rng() * (i + 1));
+  [tilts[i], tilts[j]] = [tilts[j], tilts[i]];
+}
+
+let curY = 10;
+let baseZ = 1;
+let topZ  = 1000;
+const photoEls = [];
+
+photos.forEach((src, i) => {
+  const wrap = document.createElement('div');
+  wrap.className = 'photo-wrap';
+
+  const img = document.createElement('img');
+  img.src = 'images_v2/' + src;
+  img.alt = '';
+  img.loading = 'lazy';
+  img.draggable = false;
+  wrap.appendChild(img);
+
+  const bub = document.createElement('div');
+  const variant = bubbleVariants[i % bubbleVariants.length];
+  bub.className = 'bubble' + (variant ? ' ' + variant : '');
+  bub.textContent = bubbleTexts[i % bubbleTexts.length];
+  wrap.appendChild(bub);
+
+  collage.appendChild(wrap);
+  photoEls.push({ wrap, img, bub, src });
+
+  const photoW = Math.floor(VW * rr(PHOTO_MIN_W, PHOTO_MAX_W));
+  const photoH = photoW * ASPECT;
+  const tilt   = tilts[i];
+
+  // alternate sides — zig-zag
+  const side = i % 2;
+  let left;
+  if (side === 0) {
+    const maxL = Math.max(8, Math.floor(VW * 0.40) - Math.floor(photoW * 0.5));
+    left = ri(-8, maxL);
+  } else {
+    const minL = Math.floor(VW * 0.50) - Math.floor(photoW * 0.2);
+    const maxL = VW - photoW + 8;
+    left = ri(Math.min(minL, maxL - 4), maxL);
+  }
+
+  wrap.style.cssText = `
+    width: ${photoW}px;
+    left:  ${left}px;
+    top:   ${Math.floor(curY)}px;
+    transform: rotate(${tilt.toFixed(2)}deg);
+    z-index: ${baseZ++};
+  `;
+
+  curY += photoH * STEP_RATIO + ri(-6, 14);
+
+  img.onload = () => {
+    bub.style.bottom = (img.clientHeight * 0.72) + 'px';
+    bub.style.left   = '50%';
+    bub.style.marginLeft = (-bub.offsetWidth / 2) + 'px';
+  };
+  img.onerror = () => { wrap.style.display = 'none'; };
+
+  /* ── DRAG + TAP via pointer events ──────────────────────── */
+  attachDrag(wrap, bub);
+});
+
+const maxY = curY + 40;
+
+/* ── sprinkle decorative stickers in between ─────────────────── */
+const NUM_STICKERS = 20;
+for (let i = 0; i < NUM_STICKERS; i++) {
+  const s = document.createElement('div');
+  s.className = 'deco-sticker';
+  s.innerHTML = stickerSVGs[i % stickerSVGs.length];
+  const tilt = rr(-22, 22);
+  const left = ri(0, VW - 60);
+  const top  = ri(60, maxY - 60);
+  s.style.cssText = `left:${left}px; top:${top}px; transform: rotate(${tilt.toFixed(2)}deg);`;
+  collage.appendChild(s);
+}
+
+collage.style.height = maxY + 'px';
+
+/* drag handler -- distinguishes tap from drag */
+function attachDrag(wrap, bub) {
+  wrap.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    e.preventDefault();
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startLeft = parseFloat(wrap.style.left) || 0;
+    const startTop  = parseFloat(wrap.style.top)  || 0;
+    let didMove = false;
+
+    topZ++;
+    wrap.style.zIndex = topZ;
+    wrap.classList.add('dragging');
+
+    function onMove(ev) {
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+      if (!didMove && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) didMove = true;
+      if (didMove) {
+        wrap.style.left = (startLeft + dx) + 'px';
+        wrap.style.top  = (startTop  + dy) + 'px';
+      }
+    }
+    function onUp(ev) {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup',   onUp);
+      document.removeEventListener('pointercancel', onUp);
+      wrap.classList.remove('dragging');
+
+      if (!didMove) {
+        // pure tap → toggle bubble
+        const wasShown = bub.classList.contains('show');
+        photoEls.forEach(p => p.bub.classList.remove('show'));
+        if (!wasShown) {
+          bub.classList.add('show');
+          clearTimeout(bub._t);
+          bub._t = setTimeout(() => bub.classList.remove('show'), 2800);
+        }
+      }
+    }
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup',   onUp);
+    document.addEventListener('pointercancel', onUp);
+  });
+}
+
+/* tap empty space → hide bubbles */
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.photo-wrap')) return;
+  photoEls.forEach(p => p.bub.classList.remove('show'));
+});
+</script>
+</body>
+</html>
