@@ -35,18 +35,6 @@
       overflow: hidden;
     }
     .conf { position: absolute; }
-    .bg-text {
-      position: absolute;
-      font-family: 'Archivo Black', 'Noto Sans KR', sans-serif;
-      font-weight: 900;
-      color: var(--neon-yellow);
-      -webkit-text-stroke: 1.5px var(--ink);
-      text-shadow: 3px 3px 0 var(--hot-pink);
-      white-space: nowrap;
-      line-height: 1;
-      user-select: none;
-      pointer-events: none;
-    }
 
     /* ═══════════════════════════════ SPLASH ═══════════════════════════════ */
     #splash {
@@ -426,22 +414,6 @@ function ri(a,b)  { return Math.floor(rr(a, b+1)); }
       el.textContent = '🐾';
       el.style.cssText = `left:${x}px; top:${y}px; font-size:${sz}px; line-height:1; transform: rotate(${tilt}deg); opacity:0.7;`;
     }
-    bg.appendChild(el);
-  }
-
-  /* sprinkle "생일 축하해 민수야" text behind photos */
-  const phrase = "생일 축하해 민수야";
-  const NUM_PHRASES = 7;
-  for (let i = 0; i < NUM_PHRASES; i++) {
-    const el = document.createElement('div');
-    el.className = 'bg-text';
-    el.textContent = phrase;
-    const size = 1.5 + rng() * 1.4;       // 1.5 – 2.9 rem
-    const tilt = -22 + rng() * 44;        // -22° – +22°
-    const x = Math.floor(rng() * (w - 80)) - 40;
-    const y = Math.floor(rng() * (h - 60)) + 20;
-    const op = 0.40 + rng() * 0.25;       // 0.40 – 0.65
-    el.style.cssText = `left:${x}px; top:${y}px; transform: rotate(${tilt.toFixed(1)}deg); font-size:${size.toFixed(2)}rem; opacity:${op.toFixed(2)};`;
     bg.appendChild(el);
   }
 })();
